@@ -80,14 +80,15 @@ docker compose logs -f api
 Warten bis du `Now listening on: http://[::]:8080` siehst. `Strg+C` bricht das
 Log-Tailen ab — die Container laufen weiter.
 
-Der `BootstrapAdminService` führt beim ersten Start die DB-Migrations aus und
-legt einen Admin-User mit deinen `ORQESTRA_BOOTSTRAP_*`-Credentials an.
+Beim ersten Start führt der `DatabaseMigrationService` die DB-Migrations aus.
 
-### 6. Im UI einloggen + Template Setup
+### 6. Ersten Admin-User anlegen + Template Setup
 
 Browser auf `UI_PUBLIC_URL` (z.B. `https://orqestra.deine-domain.de`).
 
-1. Login mit `ORQESTRA_BOOTSTRAP_EMAIL` + `ORQESTRA_BOOTSTRAP_PASSWORD`
+1. Beim allerersten Aufruf zeigt das UI ein **Setup-Formular** statt dem Login —
+   E-Mail + Passwort (mind. 8 Zeichen) eintragen → der erste Admin wird angelegt
+   und du bist direkt eingeloggt
 2. **Broker Accounts** → Alpaca Paper Account anlegen (API Key + Secret von
    [alpaca.markets](https://alpaca.markets))
 3. **Settings → LLM Providers** → Anthropic API Key eintragen
