@@ -24,8 +24,6 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-orqestra};Username=${POSTGRES_USER:-orqestra};Password=${POSTGRES_PASSWORD}"
       Cors__AllowedOrigins__0: ${UI_PUBLIC_URL:-http://localhost:3000}
-      Bootstrap__AdminEmail: ${ORQESTRA_BOOTSTRAP_EMAIL:?set ORQESTRA_BOOTSTRAP_EMAIL in .env}
-      Bootstrap__AdminPassword: ${ORQESTRA_BOOTSTRAP_PASSWORD:?set ORQESTRA_BOOTSTRAP_PASSWORD in .env}
     volumes:
       - api-dp-keys:/app/dp-keys
     ports:

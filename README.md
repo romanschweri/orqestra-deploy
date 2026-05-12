@@ -61,12 +61,13 @@ Mindestens diese Werte musst du setzen:
 
 - `POSTGRES_PASSWORD` — irgendein langes random String, z.B. via
   `openssl rand -base64 32`
-- `ORQESTRA_BOOTSTRAP_EMAIL` / `ORQESTRA_BOOTSTRAP_PASSWORD` — dein Login fürs
-  erste UI-Login (mind. 8 Zeichen Passwort)
 - `ORQESTRA_API_IMAGE` / `ORQESTRA_UI_IMAGE` — `romanschweri` als Username
   drin lassen, das ist Roman's GHCR-Namespace
 - `API_PUBLIC_URL` / `UI_PUBLIC_URL` — die URLs, unter denen die App vom
   Browser aus erreichbar ist (siehe Reverse-Proxy unten)
+
+Den ersten Admin-User legst du nicht hier an, sondern beim ersten Aufruf des
+UI im Browser (siehe Schritt 6).
 
 ### 5. Starten
 
