@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-orqestra}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-orqestra}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: ${ORQESTRA_API_IMAGE:-ghcr.io/your-github-user/orqestra-api:latest}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-orqestra};Username=${POSTGRES_USER:-orqestra};Password=${POSTGRES_PASSWORD}"
+      Cors__AllowedOrigins__0: ${UI_PUBLIC_URL:-http://localhost:3000}
+      Bootstrap__AdminEmail: ${ORQESTRA_BOOTSTRAP_EMAIL:?set ORQESTRA_BOOTSTRAP_EMAIL in .env}
+      Bootstrap__AdminPassword: ${ORQESTRA_BOOTSTRAP_PASSWORD:?set ORQESTRA_BOOTSTRAP_PASSWORD in .env}
+    volumes:
+      - api-dp-keys:/app/dp-keys
+    ports:
+      - "${API_PORT:-5140}:8080"
+
+  ui:
+    image: ${ORQESTRA_UI_IMAGE:-ghcr.io/your-github-user/orqestra-ui:latest}
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # API_URL is used by Next.js server-side fetches (SSR) inside the Docker network.
+      API_URL: http://api:8080
+      # NEXT_PUBLIC_API_URL is baked into the client bundle. For browser → API calls.
+      # When you put both behind a reverse proxy on the same domain, point this at
+      # https://your-domain/api or similar.
+      NEXT_PUBLIC_API_URL: ${API_PUBLIC_URL:-http://localhost:5140}
+    ports:
+      - "${UI_PORT:-3000}:3000"
+
+volumes:
+  postgres-data:
+  api-dp-keys:
